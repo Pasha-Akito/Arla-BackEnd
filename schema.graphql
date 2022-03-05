@@ -1,0 +1,36 @@
+type Country {
+	name: String!
+	peopleLivesIn: [Person!]! @relationship(type: "LIVES_IN", direction: IN)
+}
+
+type Course {
+	name: String!
+	peopleGraduated: [Person!]! @relationship(type: "GRADUATED", direction: IN, properties: "GraduatedProperties")
+	year: String
+}
+
+interface GraduatedProperties @relationshipProperties {
+	year: Int
+}
+
+type Interest {
+	name: String!
+	peopleInterestIn: [Person!]! @relationship(type: "INTEREST_IN", direction: IN)
+}
+
+type Person {
+	bio: String
+	email: String
+	graduatedCourses: [Course!]! @relationship(type: "GRADUATED", direction: OUT, properties: "GraduatedProperties")
+	id: String
+	interestInInterests: [Interest!]! @relationship(type: "INTEREST_IN", direction: OUT)
+	livesInCountries: [Country!]! @relationship(type: "LIVES_IN", direction: OUT)
+	user: User! @relationship(type: "IS_PERSON", direction: IN)
+    name: String!
+	token: String
+}
+
+type User {
+    name: String!
+    profile: Person! @relationship(type: "IS_PERSON", direction: OUT)
+}

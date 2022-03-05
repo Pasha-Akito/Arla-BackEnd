@@ -1,54 +1,39 @@
 const { Neo4jGraphQL } = require("@neo4j/graphql");
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer } = require("apollo-server");
 const neo4j = require("neo4j-driver");
+const fs = require("fs");
+const dotenv = require("dotenv");
+const path = require("path");
 
-const typeDefs = gql`
-type Country {
-	name: String!
-	peopleLivesIn: [Person!]! @relationship(type: "LIVES_IN", direction: IN)
-}
+dotenv.config();
 
-type Course {
-	name: String!
-	peopleGraduated: [Person!]! @relationship(type: "GRADUATED", direction: IN, properties: "GraduatedProperties")
-	year: String
-}
+// Loading type definitions from schema.graphql file
+const typeDefs = fs
+    .readFileSync(path.join(__dirname, "schema.graphql"))
+    .toString("utf-8");
 
-interface GraduatedProperties @relationshipProperties {
-	year: BigInt
-}
+// Creating executable GraphQL schema 
+// Neo4jGraphQL autogenerates resolvers
 
-type Interest {
-	name: String!
-	peopleInterestIn: [Person!]! @relationship(type: "INTEREST_IN", direction: IN)
-}
+const neoSchema = new Neo4jGraphQL({
+    typeDefs
+});
 
-type Person {
-	bio: String
-	email: String
-	graduatedCourses: [Course!]! @relationship(type: "GRADUATED", direction: OUT, properties: "GraduatedProperties")
-	id: String
-	interestInInterests: [Interest!]! @relationship(type: "INTEREST_IN", direction: OUT)
-	livesInCountries: [Country!]! @relationship(type: "LIVES_IN", direction: OUT)
-	name: String!
-	profile: String
-	token: String
-}
-`;
-
+// Neo4j driver instance
 const driver = neo4j.driver(
-    "neo4j+s://f6ec99dd.databases.neo4j.io:7687",
-    neo4j.auth.basic("neo4j", "RimrUr_ovCfoXxu3ty5IibqWaC0-sp4kjQqgg7JNWyM")
+    process.env.DATABASE_URL,
+    neo4j.auth.basic(process.env.DATABASE_USERNAME, process.env.DATABASE_PASSWORD)
 );
 
-const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
-
-neoSchema.getSchema().then((schema) => {
-    const server = new ApolloServer({
-        schema,
-    });
+const server = new ApolloServer({
+    context: { driver,  },
+    schema: neoSchema.schema,
+    introspection: true,
+    playground: true
+  });
   
+  
+// Starting Apollo Server
     server.listen().then(({ url }) => {
-        console.log(`🚀 Server ready at ${url}`);
+        console.log(`🚀 GraphQL Server ready at ${url}`);
     });
-  })
