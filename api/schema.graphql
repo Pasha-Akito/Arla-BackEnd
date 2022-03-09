@@ -18,19 +18,23 @@ type Interest {
 	peopleInterestIn: [Person!]! @relationship(type: "INTEREST_IN", direction: IN)
 }
 
+type User {
+	uuid: ID! @id
+	email: String
+	name: String
+	image: String
+	token: String
+	profile: Person @relationship(type: "IS_PERSON", direction: OUT)
+	permissions: [String]
+}
+
 type Person {
+	uuid: ID! @id
+	name: String
 	bio: String
 	email: String
 	graduatedCourses: [Course!]! @relationship(type: "GRADUATED", direction: OUT, properties: "GraduatedProperties")
-	id: String
 	interestInInterests: [Interest!]! @relationship(type: "INTEREST_IN", direction: OUT)
 	livesInCountries: [Country!]! @relationship(type: "LIVES_IN", direction: OUT)
-	user: User! @relationship(type: "IS_PERSON", direction: IN)
-    name: String!
-	token: String
-}
-
-type User {
-    name: String!
-    profile: Person! @relationship(type: "IS_PERSON", direction: OUT)
+    user: User @relationship(type: "IS_PERSON", direction: IN)
 }

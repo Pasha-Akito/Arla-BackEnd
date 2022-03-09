@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Pasha-Akito/Arla-BackEnd#readme",
   "dependencies": {
+    "@apollo/client": "^3.5.10",
     "@neo4j/graphql": "^3.0.1",
     "@neo4j/introspector": "^1.0.1",
     "apollo-server": "^3.6.3",
