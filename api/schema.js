@@ -5,7 +5,7 @@ export const typeDefs = gql`
 type User {
   tokenId: String!
   permissions: [String]
-  email: String!
+  email: String
   profile: Person @relationship(type: "IS_PERSON", direction: OUT)
 }
 
@@ -21,21 +21,26 @@ type Person {
 }
 
 type Interest {
-  Name: String!
-  Bio: String
+  name: String!
+  bio: String
   id: ID! @id
   peopleInterested: [Person!]! @relationship(type: "INTEREST_IN", direction: IN)
 }
 
 type Course {
-  Name: String!
-  Bio: String
+  name: String!
+  bio: String
   id: ID! @id
   peopleGraduated: [Person!]! @relationship(type: "GRADUATED", direction: IN, properties: "Graduated")
 }
 
 interface Graduated {
   year: Int
+}
+
+enum Role {
+  User
+  ADMIN
 }
 
 `;

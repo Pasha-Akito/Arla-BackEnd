@@ -20,6 +20,11 @@ const neoSchema = new Neo4jGraphQL({
     config: {
         jwt: {
             jwksEndpoint: 'https://dev-z5v8jnvt.us.auth0.com/.well-known/jwks.json'
+        },
+        mutation: true,
+        auth: {
+            isAuthenticated: true,
+            hasRole: true
         }
     }
 });
