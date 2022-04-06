@@ -3,6 +3,8 @@ import { ApolloServer } from 'apollo-server';
 import dotenv from 'dotenv';
 import neo4j from 'neo4j-driver';
 import { typeDefs } from './schema.js';
+import pkg from '@neo4j/graphql-plugin-auth';
+const { Neo4jGraphQLAuthJWKSPlugin } = pkg;
 
 dotenv.config();
 
@@ -17,19 +19,16 @@ const driver = neo4j.driver(
 const neoSchema = new Neo4jGraphQL({
     typeDefs,
     driver,
-    config: {
-        jwt: {
+    plugins: {
+        auth: new Neo4jGraphQLAuthJWKSPlugin({
             jwksEndpoint: 'https://dev-z5v8jnvt.us.auth0.com/.well-known/jwks.json'
-        },
-        mutation: true,
-        auth: {
-            isAuthenticated: true,
-            hasRole: true
-        }
+        })
     }
 });
 
+
 neoSchema.getSchema().then((schema) => {
+    neoSchema.assertIndexesAndConstraints({ options: { create: true } })
     const server = new ApolloServer({
         schema,
         context: ({ req }) => ({ req }),

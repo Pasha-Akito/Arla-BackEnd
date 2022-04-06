@@ -2,8 +2,18 @@ import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
 
+type Query {
+  userCount(tokenId: String!): Int
+    @cypher(
+      statement: """
+        MATCH (u:User {tokenId: $tokenId})
+        RETURN count(*)
+      """
+    )
+}
+
 type User {
-  tokenId: String!
+  tokenId: String! @unique
   permissions: [String]
   email: String
   profile: Person @relationship(type: "IS_PERSON", direction: OUT)
@@ -39,7 +49,7 @@ interface Graduated {
 }
 
 enum Role {
-  User
+  USER
   ADMIN
 }
 
