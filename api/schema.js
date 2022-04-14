@@ -10,6 +10,13 @@ type Query {
         RETURN count(*)
       """
     )
+  userInterestCount(tokenId: String!, name: String!): Int
+    @cypher(
+      statement: """
+        MATCH (u:User {tokenId: $tokenId})-[:IS_PERSON]-(p:Person)-[interest:INTEREST_IN]-(i:Interest {name: $name}) 
+        RETURN count(interest)
+      """
+    )
 }
 
 type User {
