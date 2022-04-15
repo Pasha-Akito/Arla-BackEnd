@@ -58,7 +58,6 @@ type Post {
   id: ID! @id
   content: String!
   creator: Person! @relationship(type: "POSTED_BY", direction: IN, properties: "PostedAt")
-  createdAt: DateTime!
 }
 
 interface Graduated {
@@ -66,7 +65,7 @@ interface Graduated {
 }
 
 interface PostedAt {
-    date: DateTime
+    date: DateTime @timestamp(operations: [CREATE])
 }
 
 `;
