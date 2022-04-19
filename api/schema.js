@@ -17,6 +17,14 @@ type Query {
         RETURN count(interest)
       """
     )
+  userFriendCount(tokenId: String!, id: ID!): Int
+    @cypher (
+      statement: """
+      MATCH (u:User {tokenId: $tokenId})-[friend:FRIENDS_WITH]-(p:Person {id: $id})
+      RETURN count(friend)
+    """
+  )
+
 }
 
 type User {
