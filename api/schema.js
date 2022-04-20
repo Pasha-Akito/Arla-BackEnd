@@ -68,6 +68,13 @@ type Post {
   creator: Person! @relationship(type: "POSTED_BY", direction: IN, properties: "PostedAt")
 }
 
+type Message {
+  id: ID! @id
+  content: String!
+  creator: Person! @relationship(type: "POSTED_BY", direction: IN, properties: "PostedAt")
+  recipient: Person! @relationship(type: "RECEIVED_BY", direction: OUT)
+}
+
 interface Graduated {
   year: Int
 }
